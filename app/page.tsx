@@ -38,12 +38,12 @@ export default function Page() {
     username: string;
   }
 
-  const fetchPlayerData = async (userId: string): Promise<void> => {
+  const fetchPlayerData = async (username: string): Promise<void> => {
     try {
       const { data, error } = await supabase
         .from('players')
         .select('*')
-        .eq('id', userId)
+        .eq('id',username )
         .single();
 
       if (error) {
