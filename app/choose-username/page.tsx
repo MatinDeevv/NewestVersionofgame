@@ -36,7 +36,7 @@ export default function ChooseUsernamePage() {
 
       if (sessionError || !session) {
         setErrorMessage('No authenticated user found. Please log in again.');
-        router.push('/login');
+        router.push('newest-versionofgame.vercel.app/login');
         return;
       }
 
@@ -58,7 +58,7 @@ export default function ChooseUsernamePage() {
       } else {
         setSuccessMessage('Username saved successfully! Redirecting to the game...');
         setTimeout(() => {
-          router.push('/'); // Redirect to the game page
+          router.push('newest-versionofgame.vercel.app'); // Redirect to the game page
         }, 2000);
       }
     } catch (err: unknown) {
