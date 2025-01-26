@@ -12,7 +12,7 @@ export default function Page() {
   const [upgradeCost, setUpgradeCost] = useState(10);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
-
+  let userId: string;
   // Check if the user is authenticated and fetch their data
   useEffect(() => {
     const checkAuth = async () => {
@@ -21,10 +21,10 @@ export default function Page() {
         error,
       } = await supabase.auth.getSession();
       if (error || !session) {
-        router.push('/login');
+        router.push('https://newest-versionofgame.vercel.app/login');
       } else {
         setIsAuthenticated(true);
-        fetchPlayerData(session.user.id);
+        await fetchPlayerData(session.user.id);
       }
     };
 
@@ -49,7 +49,7 @@ export default function Page() {
       if (error) {
         console.error('Error fetching player data:', error);
       } else if (data) {
-        const playerData = data as PlayerData;
+        const playerData: PlayerData = data;
         setBalance(playerData.balance);
         setMultiplier(playerData.multiplier);
         setUsername(playerData.username);

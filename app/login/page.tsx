@@ -25,9 +25,9 @@ const LoginPage = () => {
           .single();
 
         if (error || !data?.username) {
-          router.push('/choose-username');
+          router.push('https://newest-versionofgame.vercel.app/login/choose-username');
         } else {
-          router.push('/game');
+          router.push('https://newest-versionofgame.vercel.app');
         }
       }
     };
