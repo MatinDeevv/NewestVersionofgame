@@ -12,19 +12,23 @@ export default function Page() {
   const [upgradeCost, setUpgradeCost] = useState(10);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
-  let userId: string;
+
   // Check if the user is authenticated and fetch their data
   useEffect(() => {
     const checkAuth = async () => {
-      const {
-        data: { session },
-        error,
-      } = await supabase.auth.getSession();
-      if (error || !session) {
-        router.push('https://newest-versionofgame.vercel.app/login');
-      } else {
-        setIsAuthenticated(true);
-        await fetchPlayerData(session.user.id);
+      try {
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession();
+        if (error || !session) {
+          router.push('https://newest-versionofgame.vercel.app/login');
+        } else {
+          setIsAuthenticated(true);
+          await fetchPlayerData(session.user.id);
+        }
+      } catch (err) {
+        console.error('Error during authentication check:', err);
       }
     };
 
@@ -32,27 +36,20 @@ export default function Page() {
   }, [router]);
 
   // Fetch player data from Supabase
-  interface PlayerData {
-    balance: number;
-    multiplier: number;
-    username: string;
-  }
-
-  const fetchPlayerData = async (username: string): Promise<void> => {
+  const fetchPlayerData = async (userId: string): Promise<void> => {
     try {
       const { data, error } = await supabase
         .from('players')
         .select('*')
-        .eq('id',username )
+        .eq('id', userId)
         .single();
 
       if (error) {
         console.error('Error fetching player data:', error);
       } else if (data) {
-        const playerData: PlayerData = data;
-        setBalance(playerData.balance);
-        setMultiplier(playerData.multiplier);
-        setUsername(playerData.username);
+        setBalance(data.balance);
+        setMultiplier(data.multiplier);
+        setUsername(data.username);
       }
     } catch (err) {
       console.error('Unexpected error fetching player data:', err);
@@ -61,11 +58,12 @@ export default function Page() {
 
   // Save player data to Supabase
   const savePlayerData = async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (session) {
-      try {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (session) {
         const { error } = await supabase
           .from('players')
           .update({
@@ -77,9 +75,9 @@ export default function Page() {
         if (error) {
           console.error('Error saving player data:', error);
         }
-      } catch (err) {
-        console.error('Unexpected error saving player data:', err);
       }
+    } catch (err) {
+      console.error('Unexpected error saving player data:', err);
     }
   };
 
