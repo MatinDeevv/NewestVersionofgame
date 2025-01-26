@@ -7,30 +7,29 @@ import supabase from '@/types/supabaseClient';
 
 export default function Page() {
   const router = useRouter();
-  const [balance, setBalance] = useState(0); // User's balance
-  const [multiplier, setMultiplier] = useState(1); // Earnings multiplier
-  const [upgradeCost, setUpgradeCost] = useState(10); // Cost to upgrade
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Authentication status
-  const [username, setUsername] = useState(''); // User's username
+  const [balance, setBalance] = useState(0);
+  const [multiplier, setMultiplier] = useState(1);
+  const [upgradeCost, setUpgradeCost] = useState(10);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [username, setUsername] = useState('');
 
   // Check if the user is authenticated and fetch their data
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
       if (error || !session) {
-        router.push('/login'); // Redirect unauthenticated users to the login page
+        router.push('/login');
       } else {
         setIsAuthenticated(true);
-        fetchPlayerData(session.user.id); // Fetch player data
+        fetchPlayerData(session.user.id);
       }
     };
 
     checkAuth();
   }, [router]);
-
-
-
-  
 
   // Fetch player data from Supabase
   interface PlayerData {
@@ -50,19 +49,21 @@ export default function Page() {
       if (error) {
         console.error('Error fetching player data:', error);
       } else if (data) {
-        const playerData: PlayerData = data;
+        const playerData = data as PlayerData;
         setBalance(playerData.balance);
         setMultiplier(playerData.multiplier);
         setUsername(playerData.username);
       }
     } catch (err) {
-      console.error('Unexpected error fetching player data:', (err as Error).message || err);
+      console.error('Unexpected error fetching player data:', err);
     }
   };
 
   // Save player data to Supabase
   const savePlayerData = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     if (session) {
       try {
         const { error } = await supabase
@@ -77,7 +78,7 @@ export default function Page() {
           console.error('Error saving player data:', error);
         }
       } catch (err) {
-        console.error('Unexpected error saving player data:', (err as Error).message || err);
+        console.error('Unexpected error saving player data:', err);
       }
     }
   };
@@ -91,15 +92,15 @@ export default function Page() {
   const handleUpgrade = () => {
     if (balance >= upgradeCost) {
       setBalance((prev) => prev - upgradeCost);
-      setMultiplier((prev) => prev * 1.5); // Increase earnings per click
-      setUpgradeCost((prev) => Math.ceil(prev * 7.5)); // Increase upgrade cost
+      setMultiplier((prev) => prev * 1.5);
+      setUpgradeCost((prev) => Math.ceil(prev * 7.5));
     }
   };
 
   // Save player data whenever relevant states change
   useEffect(() => {
     if (isAuthenticated) savePlayerData();
-  }, [balance, multiplier, upgradeCost]);
+  }, [balance, multiplier, upgradeCost, isAuthenticated]);
 
   if (!isAuthenticated) {
     return <div className="text-white text-center mt-10 select-none">Loading...</div>;
@@ -126,9 +127,15 @@ export default function Page() {
       {/* Clicker Area */}
       <div
         onClick={handleClick}
-        className="mt-10 mx-4 bg-gradient-to-b from-gray-700 to-gray-950  rounded-lg py-64 shadow-lg text-center cursor-pointer transform transition"
+        className="mt-10 mx-4 bg-gradient-to-b from-gray-700 to-gray-950 rounded-lg py-64 shadow-lg text-center cursor-pointer transform transition hover:scale-105"
       >
-<Image onClick={handleClick} src="/clicker.png" className='ml-auto mr-auto justify-center content-center hover:scale-105 ' alt="Clicker" width={200} height={200} />
+        <Image
+          src="/clicker.png"
+          alt="Clicker"
+          width={200}
+          height={200}
+          className="mx-auto"
+        />
       </div>
 
       {/* Upgrade Section */}
@@ -137,9 +144,9 @@ export default function Page() {
         <button
           onClick={handleUpgrade}
           disabled={balance < upgradeCost}
-          className={`w-full py-3 rounded-lg shadow-lg ${
+          className={`w-full py-3 rounded-lg shadow-lg transform transition ${
             balance >= upgradeCost
-              ? 'bg-gradient-to-r from-purple-500 to-indigo-600 hover:scale-105 transform transition'
+              ? 'bg-gradient-to-r from-purple-500 to-indigo-600 hover:scale-105'
               : 'bg-gray-600 cursor-not-allowed'
           }`}
         >
