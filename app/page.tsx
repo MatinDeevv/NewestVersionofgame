@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import supabase from '@/types/supabaseClient';
 
@@ -101,11 +102,11 @@ export default function Page() {
   }, [balance, multiplier, upgradeCost]);
 
   if (!isAuthenticated) {
-    return <div className="text-white text-center mt-10">Loading...</div>;
+    return <div className="text-white text-center mt-10 select-none">Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white select-none">
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-gray-700">
         <h1 className="text-2xl font-bold tracking-wide">Clicker Game</h1>
@@ -125,9 +126,9 @@ export default function Page() {
       {/* Clicker Area */}
       <div
         onClick={handleClick}
-        className="mt-10 mx-4 bg-gradient-to-b from-green-700 to-green-500 rounded-lg py-12 shadow-lg text-center cursor-pointer hover:scale-105 transform transition"
+        className="mt-10 mx-4 bg-gradient-to-b from-gray-700 to-gray-950  rounded-lg py-64 shadow-lg text-center cursor-pointer transform transition"
       >
-        <p className="text-2xl font-bold">Click to Earn Money</p>
+<Image onClick={handleClick} src="/clicker.png" className='ml-auto mr-auto justify-center content-center hover:scale-105 ' alt="Clicker" width={200} height={200} />
       </div>
 
       {/* Upgrade Section */}
