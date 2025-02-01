@@ -10,14 +10,14 @@ export default function ChooseUsernamePage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const router = useRouter();
 
-  // Refresh JWT token when it expires
+  // Refresh JWT token when it expires, redirect on SIGNED_OUT.
   useEffect(() => {
     const { data: subscription } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'TOKEN_REFRESHED' && session) {
           console.log('Token refreshed successfully');
         } else if (event === 'SIGNED_OUT') {
-          router.push('/login'); // Redirect to login if user signs out
+          router.push('/login');
         }
       }
     );
@@ -36,7 +36,7 @@ export default function ChooseUsernamePage() {
 
       if (sessionError || !session) {
         setErrorMessage('No authenticated user found. Please log in again.');
-        router.push('newest-versionofgame.vercel.app/login');
+        router.push('/login');
         return;
       }
 
@@ -58,7 +58,7 @@ export default function ChooseUsernamePage() {
       } else {
         setSuccessMessage('Username saved successfully! Redirecting to the game...');
         setTimeout(() => {
-          router.push('newest-versionofgame.vercel.app'); // Redirect to the game page
+          router.push('/');
         }, 2000);
       }
     } catch (err: unknown) {
@@ -72,34 +72,34 @@ export default function ChooseUsernamePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100">
-      <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
-        <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-blue-900 to-black">
+      <div className="w-full max-w-md p-8 bg-gray-800 shadow-2xl rounded-lg border border-yellow-600">
+        <h1 className="text-4xl font-extrabold text-center mb-6 text-yellow-300">
           Choose a Username
         </h1>
 
         {errorMessage && (
-          <div className="mb-4 text-red-600 text-center">{errorMessage}</div>
+          <div className="mb-4 text-red-400 text-center">{errorMessage}</div>
         )}
 
         {successMessage && (
-          <div className="mb-4 text-green-600 text-center">{successMessage}</div>
+          <div className="mb-4 text-green-400 text-center">{successMessage}</div>
         )}
 
         <div className="mb-6">
-          <label className="block mb-2 text-gray-600">Username</label>
+          <label className="block mb-2 text-yellow-300">Username</label>
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter your username"
+            className="w-full px-4 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
           />
         </div>
 
         <button
           onClick={handleUsernameSubmit}
-          className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition"
+          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
         >
           Save Username
         </button>
